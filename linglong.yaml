@@ -1,0 +1,57 @@
+version: "1"
+
+package:
+  id: io.github.TuxFishing
+  name: TuxFishing
+  version: 1.4.0.0
+  kind: app
+  description: |
+    3D Fishing Game
+
+base: org.deepin.foundation/23.0.0
+runtime: org.deepin.Runtime/23.0.1
+
+command:
+  - /opt/apps/io.github.TuxFishing/files/bin/tuxfishing
+
+sources:
+  - kind: git
+    url: https://github.com/mrbid/TuxFishing.git
+    version: master
+    commit: c92c645aee953ea4dd7028c66df4fa3dac453582
+
+  - kind: git
+    url: https://github.com/upx/upx.git
+    version: master
+    commit: 1427b8137a6a3fcbf541e529d9de349230f4ebae
+
+  - kind: git
+    url: https://github.com/libsdl-org/SDL.git
+    version: master
+    commit: 764c44db02c384778c8212adf5f9096d22a2aa3a
+
+  - kind: file
+    url: https://community-packages.deepin.com/beige/pool/main/g/glfw3/libglfw3_3.3.2-2_amd64.deb
+    digest: 07135a46434466b88f85ad6dbb34bc8dc4f49c822f0d07a58a665ed11179486b
+
+  - kind: file
+    url: https://community-packages.deepin.com/beige/pool/main/g/glfw3/libglfw3-dev_3.3.2-2_amd64.deb
+    digest: b32c7de448ab1946595d9e0472a097af40be3dad1fc6f3a7e47a378284676859
+
+
+build: |
+  echo "" > $PREFIX/packages.list
+  bash ./install_dep linglong/sources "$PREFIX"
+
+  cd /project/linglong/sources/upx.git/
+  cmake -Bbuild \
+        -DCMAKE_INSTALL_PREFIX=${PREFIX} \
+        -DCMAKE_INSTALL_LIBDIR=${PREFIX}/lib/${TRIPLET}
+  cmake --build build
+  cmake --build build --target install
+  
+  
+  cd /project/linglong/sources/TuxFishing.git/
+  git apply /project/patches/0001-fix-path.patch
+  make 
+  make install PREFIX=${PREFIX}

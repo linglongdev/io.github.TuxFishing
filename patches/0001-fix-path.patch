@@ -1,0 +1,43 @@
+From 2cc56e1a37eee23b61144261f4137d31e8a91ad5 Mon Sep 17 00:00:00 2001
+From: Shenyufan <751890223@qq.com>
+Date: Wed, 14 Aug 2024 20:46:59 +0800
+Subject: [PATCH] fix-path
+
+---
+ makefile | 13 +++++++++----
+ 1 file changed, 9 insertions(+), 4 deletions(-)
+
+diff --git a/makefile b/makefile
+index b8d323b..86aa11f 100644
+--- a/makefile
++++ b/makefile
+@@ -1,12 +1,12 @@
+ .PHONY: all win web test deps clean
+ 
+-name = TuxFishing
++name = tuxfishing
+ SHELL := /bin/bash
+ 
+ all:
+-	cc main.c -I inc -Ofast -lglfw -lm -o release/$(name)_linux
+-	strip --strip-unneeded release/$(name)_linux
+-	upx --lzma --best release/$(name)_linux
++	cc main.c -I inc -Ofast -lglfw -lm -o release/$(name)
++	strip --strip-unneeded release/$(name)
++	upx --lzma --best release/$(name)
+ 
+ win:
+ 	i686-w64-mingw32-gcc main.c -Ofast -I inc -L. -lglfw3dll -lm -o release/$(name)_windows.exe
+@@ -35,3 +35,8 @@ clean:
+ 	rm -f release/web/index.html
+ 	rm -f release/web/index.js
+ 	rm -f release/web/index.wasm
++
++install:
++	install -D release/$(name) -t $(PREFIX)/bin
++	install -D flat/$(name).desktop -t $(PREFIX)/share/applications
++	install -D flat/$(name).png -t $(PREFIX)/share/icons/hicolor/256x256/apps/
+\ No newline at end of file
+-- 
+2.43.4
+
